@@ -23,7 +23,7 @@ Generate configurable 3D figure primitive meshes for digital sculpting workflows
 ### From Source
 
 ```bash
-git clone https://github.com/yourusername/figure-generator.git
+git clone https://github.com/ireland-samantha/3d-figure-generator.git
 cd figure-generator
 pip install -e ".[trimesh]"
 ```
@@ -32,6 +32,17 @@ pip install -e ".[trimesh]"
 
 ```bash
 pip install -e ".[trimesh,dev]"
+```
+
+### Docker
+
+```bash
+# Build
+docker build -t figure-generator .
+
+# Run
+docker run figure-generator --list-presets
+docker run -v $(pwd):/output figure-generator --preset female_adult -o /output/figure.glb
 ```
 
 ## Quick Start
@@ -238,7 +249,7 @@ When running inside Blender, the blender backend is automatically selected.
 ### Setup
 
 ```bash
-git clone https://github.com/yourusername/figure-generator.git
+git clone https://github.com/ireland-samantha/3d-figure-generator.git
 cd figure-generator
 pip install -e ".[trimesh,dev]"
 ```
