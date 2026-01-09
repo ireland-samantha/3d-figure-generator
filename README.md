@@ -1,7 +1,10 @@
 # Figure Generator
 
+[![CI](https://github.com/ireland-samantha/3d-figure-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/ireland-samantha/3d-figure-generator/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/figure-generator.svg)](https://pypi.org/project/figure-generator/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/ireland-samantha/3d-figure-generator#docker)
 
 Generate configurable 3D figure primitive meshes for digital sculpting workflows.
 
@@ -19,6 +22,12 @@ Generate configurable 3D figure primitive meshes for digital sculpting workflows
 - **Clean Python API**: Use as a library or CLI tool
 
 ## Installation
+
+### From PyPI (Recommended)
+
+```bash
+pip install figure-generator[trimesh]
+```
 
 ### From Source
 
