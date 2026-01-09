@@ -75,11 +75,11 @@ dev = [
 figure-generator = "figure_generator.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/figure-generator"
-Documentation = "https://github.com/yourusername/figure-generator#readme"
-Repository = "https://github.com/yourusername/figure-generator.git"
-Issues = "https://github.com/yourusername/figure-generator/issues"
-Changelog = "https://github.com/yourusername/figure-generator/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/ireland-samantha/3d-figure-generator"
+Documentation = "https://github.com/ireland-samantha/3d-figure-generator#readme"
+Repository = "https://github.com/ireland-samantha/3d-figure-generator.git"
+Issues = "https://github.com/ireland-samantha/3d-figure-generator/issues"
+Changelog = "https://github.com/ireland-samantha/3d-figure-generator/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -99,6 +99,8 @@ src_paths = ["src", "tests"]
 [tool.ruff]
 line-length = 100
 target-version = "py39"
+
+[tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
@@ -112,8 +114,10 @@ ignore = [
     "E501",  # line too long (handled by black)
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/*" = ["B011"]
+# Blender addons require bl_info at top before imports
+"src/figure_generator/blender_addon.py" = ["E402"]
 
 [tool.mypy]
 python_version = "3.9"
