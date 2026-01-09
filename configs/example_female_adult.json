@@ -1,0 +1,72 @@
+{
+  "name": "Adult Female",
+  "total_heads": 7.5,
+  "head_radius": 0.5,
+  "subdivisions": 2,
+  "neck": {
+    "radius": 0.11,
+    "length": 0.35
+  },
+  "ribcage": {
+    "width": 1.05,
+    "height": 1.25,
+    "depth": 0.55
+  },
+  "breasts": {
+    "radius": 0.18,
+    "offset_x": 0.22,
+    "offset_z": 0.32,
+    "offset_y": -0.1
+  },
+  "abdomen": {
+    "radius": 0.3,
+    "length": 0.55
+  },
+  "pelvis": {
+    "width": 1.1,
+    "height": 0.7,
+    "depth": 0.5
+  },
+  "glutes": {
+    "radius": 0.24,
+    "offset_x": 0.2,
+    "offset_y": -0.15,
+    "offset_z": -0.22
+  },
+  "upper_arm": {
+    "radius": 0.105,
+    "length": 1.15
+  },
+  "forearm": {
+    "radius": 0.08,
+    "length": 1.0
+  },
+  "hand": {
+    "width": 0.09,
+    "length": 0.32,
+    "depth": 0.04
+  },
+  "thigh": {
+    "radius": 0.17,
+    "length": 1.75
+  },
+  "calf": {
+    "radius": 0.12,
+    "length": 1.7
+  },
+  "foot": {
+    "width": 0.14,
+    "height": 0.1,
+    "length": 0.38
+  },
+  "shoulder_width": 0.55,
+  "hip_width": 0.28,
+  "landmarks": {
+    "shoulder_y": 5.9,
+    "bust_y": 5.4,
+    "waist_y": 4.6,
+    "pelvis_y": 4.0,
+    "crotch_y": 3.65,
+    "knee_y": 1.9
+  }
+}
