@@ -8,20 +8,21 @@ bl_info = {
     "category": "Add Mesh",
 }
 
-import bpy
-import bmesh
 import math
+
+import bmesh
+import bpy
 from bpy.props import (
+    BoolProperty,
     EnumProperty,
     FloatProperty,
-    BoolProperty,
 )
 from bpy.types import Operator
 from mathutils import Matrix
 
 # Try to import from the package, fall back to inline definitions for standalone addon
 try:
-    from .presets import PRESETS, POSES
+    from .presets import POSES, PRESETS
 except ImportError:
     # Standalone addon installation - define presets inline
     POSES = {
@@ -150,6 +151,7 @@ except ImportError:
 # Mesh Generation Utilities (Z-up coordinate system)
 # =============================================================================
 
+
 def create_icosphere(radius, center, subdivisions=2):
     """Create an icosphere mesh at center (X, Y, Z) in Blender coords."""
     bm = bmesh.new()
@@ -168,7 +170,7 @@ def create_cylinder_z(radius, height, center, sections=16):
         segments=sections,
         radius1=radius,
         radius2=radius,
-        depth=height
+        depth=height,
     )
     # Cylinder is already along Z by default
     bmesh.ops.translate(bm, verts=bm.verts, vec=center)
@@ -200,13 +202,13 @@ def create_cylinder_arm(radius, length, center, arm_angle_deg, is_left, sections
         segments=sections,
         radius1=radius,
         radius2=radius,
-        depth=length
+        depth=length,
     )
 
     # Calculate rotation to point arm down and outward
     sign = 1 if is_left else -1
     rotation_deg = sign * (180.0 - arm_angle_deg)
-    rot_mat = Matrix.Rotation(math.radians(rotation_deg), 4, 'Y')
+    rot_mat = Matrix.Rotation(math.radians(rotation_deg), 4, "Y")
     bmesh.ops.transform(bm, matrix=rot_mat, verts=bm.verts)
 
     bmesh.ops.translate(bm, verts=bm.verts, vec=center)
@@ -231,7 +233,7 @@ def create_box(size_x, size_y, size_z, center, rotation_y_deg=0):
 
     # Rotate if needed
     if rotation_y_deg != 0:
-        rot_mat = Matrix.Rotation(math.radians(rotation_y_deg), 4, 'Y')
+        rot_mat = Matrix.Rotation(math.radians(rotation_y_deg), 4, "Y")
         bmesh.ops.transform(bm, matrix=rot_mat, verts=bm.verts)
 
     bmesh.ops.translate(bm, verts=bm.verts, vec=center)
@@ -253,6 +255,7 @@ def bmesh_to_object(bm, name, collection):
 # =============================================================================
 # Figure Generator Core
 # =============================================================================
+
 
 def generate_figure(context, preset_name, arm_angle, scale=1.0, location=(0, 0, 0)):
     """Generate a figure in the scene using Blender's Z-up coordinate system."""
@@ -276,11 +279,7 @@ def generate_figure(context, preset_name, arm_angle, scale=1.0, location=(0, 0, 
 
     def pos(x, z, y=0):
         """Create position with offset. Note: preset uses Y for height, we use Z."""
-        return (
-            x * scale + location[0],
-            y * scale + location[1],
-            z * scale + location[2]
-        )
+        return (x * scale + location[0], y * scale + location[1], z * scale + location[2])
 
     # === HEAD ===
     head_height = preset["total_heads"] - preset["head_radius"]
@@ -298,8 +297,9 @@ def generate_figure(context, preset_name, arm_angle, scale=1.0, location=(0, 0, 
     # === RIBCAGE ===
     ribcage = preset["ribcage"]
     ribcage_height = landmarks["shoulder_y"] - ribcage["height"] / 2 + 0.4
-    bm = create_box(s(ribcage["width"]), s(ribcage["depth"]), s(ribcage["height"]),
-                    pos(0, ribcage_height))
+    bm = create_box(
+        s(ribcage["width"]), s(ribcage["depth"]), s(ribcage["height"]), pos(0, ribcage_height)
+    )
     obj = bmesh_to_object(bm, "Ribcage", collection)
     created_objects.append(obj)
 
@@ -308,29 +308,33 @@ def generate_figure(context, preset_name, arm_angle, scale=1.0, location=(0, 0, 
         breasts = preset["breasts"]
         breast_height = landmarks["bust_y"]
 
-        bm = create_icosphere(s(breasts["radius"]),
-                              pos(breasts["offset_x"], breast_height, breasts["offset_z"]),
-                              subdivisions)
+        bm = create_icosphere(
+            s(breasts["radius"]),
+            pos(breasts["offset_x"], breast_height, breasts["offset_z"]),
+            subdivisions,
+        )
         obj = bmesh_to_object(bm, "Breast_Left", collection)
         created_objects.append(obj)
 
-        bm = create_icosphere(s(breasts["radius"]),
-                              pos(-breasts["offset_x"], breast_height, breasts["offset_z"]),
-                              subdivisions)
+        bm = create_icosphere(
+            s(breasts["radius"]),
+            pos(-breasts["offset_x"], breast_height, breasts["offset_z"]),
+            subdivisions,
+        )
         obj = bmesh_to_object(bm, "Breast_Right", collection)
         created_objects.append(obj)
 
     # === ABDOMEN ===
     abdomen = preset["abdomen"]
-    bm = create_cylinder_z(s(abdomen["radius"]), s(abdomen["length"]),
-                           pos(0, landmarks["waist_y"]))
+    bm = create_cylinder_z(s(abdomen["radius"]), s(abdomen["length"]), pos(0, landmarks["waist_y"]))
     obj = bmesh_to_object(bm, "Abdomen", collection)
     created_objects.append(obj)
 
     # === PELVIS ===
     pelvis = preset["pelvis"]
-    bm = create_box(s(pelvis["width"]), s(pelvis["depth"]), s(pelvis["height"]),
-                    pos(0, landmarks["pelvis_y"]))
+    bm = create_box(
+        s(pelvis["width"]), s(pelvis["depth"]), s(pelvis["height"]), pos(0, landmarks["pelvis_y"])
+    )
     obj = bmesh_to_object(bm, "Pelvis", collection)
     created_objects.append(obj)
 
@@ -338,15 +342,17 @@ def generate_figure(context, preset_name, arm_angle, scale=1.0, location=(0, 0, 
     glutes = preset["glutes"]
     glute_height = landmarks["pelvis_y"] + glutes["offset_y"]
 
-    bm = create_icosphere(s(glutes["radius"]),
-                          pos(glutes["offset_x"], glute_height, glutes["offset_z"]),
-                          subdivisions)
+    bm = create_icosphere(
+        s(glutes["radius"]), pos(glutes["offset_x"], glute_height, glutes["offset_z"]), subdivisions
+    )
     obj = bmesh_to_object(bm, "Glute_Left", collection)
     created_objects.append(obj)
 
-    bm = create_icosphere(s(glutes["radius"]),
-                          pos(-glutes["offset_x"], glute_height, glutes["offset_z"]),
-                          subdivisions)
+    bm = create_icosphere(
+        s(glutes["radius"]),
+        pos(-glutes["offset_x"], glute_height, glutes["offset_z"]),
+        subdivisions,
+    )
     obj = bmesh_to_object(bm, "Glute_Right", collection)
     created_objects.append(obj)
 
@@ -366,13 +372,11 @@ def generate_figure(context, preset_name, arm_angle, scale=1.0, location=(0, 0, 
         ua_horizontal = math.sin(angle_rad) * upper_arm["length"] / 2
         ua_vertical = math.cos(angle_rad) * upper_arm["length"] / 2
 
-        ua_center = pos(
-            sign * (shoulder_x + ua_horizontal),
-            shoulder_height - ua_vertical
-        )
+        ua_center = pos(sign * (shoulder_x + ua_horizontal), shoulder_height - ua_vertical)
 
-        bm = create_cylinder_arm(s(upper_arm["radius"]), s(upper_arm["length"]),
-                                  ua_center, arm_angle, is_left)
+        bm = create_cylinder_arm(
+            s(upper_arm["radius"]), s(upper_arm["length"]), ua_center, arm_angle, is_left
+        )
         obj = bmesh_to_object(bm, f"UpperArm_{side}", collection)
         created_objects.append(obj)
 
@@ -384,13 +388,11 @@ def generate_figure(context, preset_name, arm_angle, scale=1.0, location=(0, 0, 
         fa_horizontal = math.sin(angle_rad) * forearm["length"] / 2
         fa_vertical = math.cos(angle_rad) * forearm["length"] / 2
 
-        fa_center = pos(
-            sign * (elbow_x + fa_horizontal),
-            elbow_height - fa_vertical
-        )
+        fa_center = pos(sign * (elbow_x + fa_horizontal), elbow_height - fa_vertical)
 
-        bm = create_cylinder_arm(s(forearm["radius"]), s(forearm["length"]),
-                                  fa_center, arm_angle, is_left)
+        bm = create_cylinder_arm(
+            s(forearm["radius"]), s(forearm["length"]), fa_center, arm_angle, is_left
+        )
         obj = bmesh_to_object(bm, f"Forearm_{side}", collection)
         created_objects.append(obj)
 
@@ -402,15 +404,17 @@ def generate_figure(context, preset_name, arm_angle, scale=1.0, location=(0, 0, 
         hand_horizontal = math.sin(angle_rad) * hand["length"] / 2
         hand_vertical = math.cos(angle_rad) * hand["length"] / 2
 
-        hand_center = pos(
-            sign * (wrist_x + hand_horizontal),
-            wrist_height - hand_vertical
-        )
+        hand_center = pos(sign * (wrist_x + hand_horizontal), wrist_height - hand_vertical)
 
         # Hand box rotated to align with arm (same rotation as arm cylinders)
         hand_rotation = sign * (180.0 - arm_angle)
-        bm = create_box(s(hand["width"]), s(hand["depth"]), s(hand["length"]),
-                        hand_center, rotation_y_deg=hand_rotation)
+        bm = create_box(
+            s(hand["width"]),
+            s(hand["depth"]),
+            s(hand["length"]),
+            hand_center,
+            rotation_y_deg=hand_rotation,
+        )
         obj = bmesh_to_object(bm, f"Hand_{side}", collection)
         created_objects.append(obj)
 
@@ -442,7 +446,7 @@ def generate_figure(context, preset_name, arm_angle, scale=1.0, location=(0, 0, 
         foot_center = pos(
             sign * hip_x,
             foot["height"] / 2,  # Height (Z)
-            foot["length"] / 2 - 0.12  # Forward offset (Y)
+            foot["length"] / 2 - 0.12,  # Forward offset (Y)
         )
         bm = create_box(s(foot["width"]), s(foot["length"]), s(foot["height"]), foot_center)
         obj = bmesh_to_object(bm, f"Foot_{side}", collection)
@@ -455,34 +459,36 @@ def generate_figure(context, preset_name, arm_angle, scale=1.0, location=(0, 0, 
 # Blender Operators
 # =============================================================================
 
+
 class MESH_OT_figure_generator(Operator):
     """Generate an anatomically-proportioned figure mesh"""
+
     bl_idname = "mesh.figure_generator"
     bl_label = "Figure"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     preset: EnumProperty(
         name="Preset",
         description="Figure preset to use",
         items=[
-            ('female_adult', "Female Adult", "Adult female proportions (7.5 heads)"),
-            ('male_adult', "Male Adult", "Adult male proportions (8 heads)"),
-            ('child', "Child", "Child proportions 6-8 years (6 heads)"),
-            ('heroic', "Heroic", "Stylized heroic proportions (8.5 heads)"),
+            ("female_adult", "Female Adult", "Adult female proportions (7.5 heads)"),
+            ("male_adult", "Male Adult", "Adult male proportions (8 heads)"),
+            ("child", "Child", "Child proportions 6-8 years (6 heads)"),
+            ("heroic", "Heroic", "Stylized heroic proportions (8.5 heads)"),
         ],
-        default='female_adult'
+        default="female_adult",
     )
 
     pose: EnumProperty(
         name="Pose",
         description="Arm pose preset",
         items=[
-            ('apose', "A-Pose", "45 degree arms, ideal for sculpting"),
-            ('tpose', "T-Pose", "90 degree arms, ideal for rigging"),
-            ('relaxed', "Relaxed", "15 degree arms, more natural pose"),
-            ('custom', "Custom", "Use custom arm angle"),
+            ("apose", "A-Pose", "45 degree arms, ideal for sculpting"),
+            ("tpose", "T-Pose", "90 degree arms, ideal for rigging"),
+            ("relaxed", "Relaxed", "15 degree arms, more natural pose"),
+            ("custom", "Custom", "Use custom arm angle"),
         ],
-        default='apose'
+        default="apose",
     )
 
     arm_angle: FloatProperty(
@@ -491,25 +497,19 @@ class MESH_OT_figure_generator(Operator):
         default=45.0,
         min=0.0,
         max=180.0,
-        subtype='ANGLE'
+        subtype="ANGLE",
     )
 
     scale: FloatProperty(
-        name="Scale",
-        description="Overall scale of the figure",
-        default=1.0,
-        min=0.01,
-        max=100.0
+        name="Scale", description="Overall scale of the figure", default=1.0, min=0.01, max=100.0
     )
 
     join_meshes: BoolProperty(
-        name="Join Meshes",
-        description="Join all parts into a single mesh",
-        default=False
+        name="Join Meshes", description="Join all parts into a single mesh", default=False
     )
 
     def execute(self, context):
-        if self.pose == 'custom':
+        if self.pose == "custom":
             arm_angle = math.degrees(self.arm_angle)
         else:
             arm_angle = POSES[self.pose]
@@ -517,14 +517,10 @@ class MESH_OT_figure_generator(Operator):
         location = context.scene.cursor.location.copy()
 
         objects = generate_figure(
-            context,
-            self.preset,
-            arm_angle,
-            scale=self.scale,
-            location=tuple(location)
+            context, self.preset, arm_angle, scale=self.scale, location=tuple(location)
         )
 
-        bpy.ops.object.select_all(action='DESELECT')
+        bpy.ops.object.select_all(action="DESELECT")
         for obj in objects:
             obj.select_set(True)
 
@@ -535,15 +531,15 @@ class MESH_OT_figure_generator(Operator):
             bpy.ops.object.join()
             context.active_object.name = f"Figure_{self.preset}"
 
-        self.report({'INFO'}, f"Generated {len(objects)} figure parts")
-        return {'FINISHED'}
+        self.report({"INFO"}, f"Generated {len(objects)} figure parts")
+        return {"FINISHED"}
 
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "preset")
         layout.separator()
         layout.prop(self, "pose")
-        if self.pose == 'custom':
+        if self.pose == "custom":
             layout.prop(self, "arm_angle")
         layout.separator()
         layout.prop(self, "scale")
@@ -556,75 +552,80 @@ class MESH_OT_figure_generator(Operator):
 
 class MESH_OT_figure_female(Operator):
     """Generate female adult figure"""
+
     bl_idname = "mesh.figure_female"
     bl_label = "Female Adult"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         location = context.scene.cursor.location.copy()
-        objects = generate_figure(context, 'female_adult', 45.0, location=tuple(location))
-        bpy.ops.object.select_all(action='DESELECT')
+        objects = generate_figure(context, "female_adult", 45.0, location=tuple(location))
+        bpy.ops.object.select_all(action="DESELECT")
         for obj in objects:
             obj.select_set(True)
         if objects:
             context.view_layer.objects.active = objects[0]
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class MESH_OT_figure_male(Operator):
     """Generate male adult figure"""
+
     bl_idname = "mesh.figure_male"
     bl_label = "Male Adult"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         location = context.scene.cursor.location.copy()
-        objects = generate_figure(context, 'male_adult', 45.0, location=tuple(location))
-        bpy.ops.object.select_all(action='DESELECT')
+        objects = generate_figure(context, "male_adult", 45.0, location=tuple(location))
+        bpy.ops.object.select_all(action="DESELECT")
         for obj in objects:
             obj.select_set(True)
         if objects:
             context.view_layer.objects.active = objects[0]
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class MESH_OT_figure_child(Operator):
     """Generate child figure"""
+
     bl_idname = "mesh.figure_child"
     bl_label = "Child"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         location = context.scene.cursor.location.copy()
-        objects = generate_figure(context, 'child', 45.0, location=tuple(location))
-        bpy.ops.object.select_all(action='DESELECT')
+        objects = generate_figure(context, "child", 45.0, location=tuple(location))
+        bpy.ops.object.select_all(action="DESELECT")
         for obj in objects:
             obj.select_set(True)
         if objects:
             context.view_layer.objects.active = objects[0]
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class MESH_OT_figure_heroic(Operator):
     """Generate heroic/stylized figure"""
+
     bl_idname = "mesh.figure_heroic"
     bl_label = "Heroic"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         location = context.scene.cursor.location.copy()
-        objects = generate_figure(context, 'heroic', 45.0, location=tuple(location))
-        bpy.ops.object.select_all(action='DESELECT')
+        objects = generate_figure(context, "heroic", 45.0, location=tuple(location))
+        bpy.ops.object.select_all(action="DESELECT")
         for obj in objects:
             obj.select_set(True)
         if objects:
             context.view_layer.objects.active = objects[0]
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 # =============================================================================
 # Menu
 # =============================================================================
+
 
 class MESH_MT_figure_submenu(bpy.types.Menu):
     bl_idname = "MESH_MT_figure_submenu"
@@ -632,16 +633,16 @@ class MESH_MT_figure_submenu(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("mesh.figure_generator", text="Figure (Custom)...", icon='ARMATURE_DATA')
+        layout.operator("mesh.figure_generator", text="Figure (Custom)...", icon="ARMATURE_DATA")
         layout.separator()
-        layout.operator("mesh.figure_female", icon='USER')
-        layout.operator("mesh.figure_male", icon='USER')
-        layout.operator("mesh.figure_child", icon='USER')
-        layout.operator("mesh.figure_heroic", icon='USER')
+        layout.operator("mesh.figure_female", icon="USER")
+        layout.operator("mesh.figure_male", icon="USER")
+        layout.operator("mesh.figure_child", icon="USER")
+        layout.operator("mesh.figure_heroic", icon="USER")
 
 
 def menu_func(self, context):
-    self.layout.menu("MESH_MT_figure_submenu", icon='ARMATURE_DATA')
+    self.layout.menu("MESH_MT_figure_submenu", icon="ARMATURE_DATA")
 
 
 # =============================================================================

@@ -8,14 +8,15 @@ and utilities for loading/saving JSON configs.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Optional, Dict, Any, Union
+from typing import Any
 
 
 @dataclass
 class BodyPartConfig:
     """Configuration for a cylindrical body part."""
+
     radius: float
     length: float
 
@@ -29,6 +30,7 @@ class BodyPartConfig:
 @dataclass
 class BoxPartConfig:
     """Configuration for a box-shaped body part."""
+
     width: float
     height: float
     depth: float
@@ -42,6 +44,7 @@ class BoxPartConfig:
 @dataclass
 class SpherePartConfig:
     """Configuration for a spherical body part with offset positioning."""
+
     radius: float
     offset_x: float = 0.0
     offset_y: float = 0.0
@@ -55,6 +58,7 @@ class SpherePartConfig:
 @dataclass
 class FootConfig:
     """Configuration for foot dimensions."""
+
     width: float
     height: float
     length: float
@@ -68,6 +72,7 @@ class FootConfig:
 @dataclass
 class HandConfig:
     """Configuration for hand dimensions."""
+
     width: float
     length: float
     depth: float
@@ -81,6 +86,7 @@ class HandConfig:
 @dataclass
 class LandmarksConfig:
     """Y-axis positions for anatomical landmarks."""
+
     shoulder_y: float
     bust_y: float
     waist_y: float
@@ -90,8 +96,14 @@ class LandmarksConfig:
 
     def __post_init__(self) -> None:
         # Validate landmarks are in descending order (top to bottom)
-        order = [self.shoulder_y, self.bust_y, self.waist_y, 
-                 self.pelvis_y, self.crotch_y, self.knee_y]
+        order = [
+            self.shoulder_y,
+            self.bust_y,
+            self.waist_y,
+            self.pelvis_y,
+            self.crotch_y,
+            self.knee_y,
+        ]
         for i in range(len(order) - 1):
             if order[i] < order[i + 1]:
                 raise ValueError("Landmarks must be in descending Y order (top to bottom)")
@@ -101,10 +113,10 @@ class LandmarksConfig:
 class FigureConfig:
     """
     Complete configuration for a figure's proportions.
-    
+
     This dataclass defines all parameters needed to generate a figure,
     following classical figure drawing proportions measured in "head units".
-    
+
     Attributes:
         name: Human-readable name for this configuration
         total_heads: Total figure height in head units (typically 7-8)
@@ -126,11 +138,12 @@ class FigureConfig:
         hip_width: X offset for hip/leg attachment
         landmarks: Y positions for anatomical landmarks
     """
+
     name: str
     total_heads: float
     head_radius: float
     subdivisions: int
-    
+
     neck: BodyPartConfig
     ribcage: BoxPartConfig
     abdomen: BodyPartConfig
@@ -142,12 +155,12 @@ class FigureConfig:
     thigh: BodyPartConfig
     calf: BodyPartConfig
     foot: FootConfig
-    
+
     shoulder_width: float
     hip_width: float
     landmarks: LandmarksConfig
-    
-    breasts: Optional[SpherePartConfig] = None
+
+    breasts: SpherePartConfig | None = None
 
     def __post_init__(self) -> None:
         if self.total_heads <= 0:
@@ -161,7 +174,7 @@ class FigureConfig:
         if self.hip_width <= 0:
             raise ValueError(f"hip_width must be positive, got {self.hip_width}")
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert config to dictionary for JSON serialization."""
         result = asdict(self)
         # Remove None values
@@ -170,16 +183,16 @@ class FigureConfig:
         return result
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "FigureConfig":
+    def from_dict(cls, data: dict[str, Any]) -> FigureConfig:
         """
         Create FigureConfig from a dictionary.
-        
+
         Args:
             data: Dictionary with configuration values
-            
+
         Returns:
             FigureConfig instance
-            
+
         Raises:
             ValueError: If required fields are missing or invalid
             KeyError: If required fields are missing
@@ -208,31 +221,31 @@ class FigureConfig:
         )
 
 
-def load_config(path: Union[str, Path]) -> FigureConfig:
+def load_config(path: str | Path) -> FigureConfig:
     """
     Load configuration from a JSON file.
-    
+
     Args:
         path: Path to JSON configuration file
-        
+
     Returns:
         FigureConfig instance
-        
+
     Raises:
         FileNotFoundError: If file doesn't exist
         json.JSONDecodeError: If file contains invalid JSON
         ValueError: If configuration is invalid
     """
     path = Path(path)
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         data = json.load(f)
     return FigureConfig.from_dict(data)
 
 
-def save_config(config: FigureConfig, path: Union[str, Path]) -> None:
+def save_config(config: FigureConfig, path: str | Path) -> None:
     """
     Save configuration to a JSON file.
-    
+
     Args:
         config: FigureConfig instance to save
         path: Output file path

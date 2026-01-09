@@ -4,10 +4,9 @@ These tests mock Blender's bpy module to test the addon logic without
 requiring Blender to be installed.
 """
 
-import sys
 import math
-from unittest.mock import MagicMock, patch, PropertyMock
-from typing import List, Tuple
+import sys
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -42,14 +41,14 @@ def mock_bpy():
     mock_bpy.data.objects = MagicMock()
 
     # Add to sys.modules
-    sys.modules['bpy'] = mock_bpy
-    sys.modules['bpy.props'] = mock_bpy.props
-    sys.modules['bpy.types'] = mock_bpy.types
-    sys.modules['bpy.utils'] = mock_bpy.utils
+    sys.modules["bpy"] = mock_bpy
+    sys.modules["bpy.props"] = mock_bpy.props
+    sys.modules["bpy.types"] = mock_bpy.types
+    sys.modules["bpy.utils"] = mock_bpy.utils
 
     # Mock bmesh
     mock_bmesh = MagicMock()
-    sys.modules['bmesh'] = mock_bmesh
+    sys.modules["bmesh"] = mock_bmesh
 
     # Mock mathutils
     mock_mathutils = MagicMock()
@@ -57,17 +56,17 @@ def mock_bpy():
     mock_mathutils.Matrix.Rotation = MagicMock(return_value=MagicMock())
     mock_mathutils.Matrix.Scale = MagicMock(return_value=MagicMock())
     mock_mathutils.Vector = MagicMock()
-    sys.modules['mathutils'] = mock_mathutils
+    sys.modules["mathutils"] = mock_mathutils
 
     yield mock_bpy
 
     # Cleanup
-    del sys.modules['bpy']
-    del sys.modules['bpy.props']
-    del sys.modules['bpy.types']
-    del sys.modules['bpy.utils']
-    del sys.modules['bmesh']
-    del sys.modules['mathutils']
+    del sys.modules["bpy"]
+    del sys.modules["bpy.props"]
+    del sys.modules["bpy.types"]
+    del sys.modules["bpy.utils"]
+    del sys.modules["bmesh"]
+    del sys.modules["mathutils"]
 
 
 class TestBlenderAddonPresets:
@@ -87,10 +86,24 @@ class TestBlenderAddonPresets:
         from figure_generator.blender_addon import PRESETS
 
         required_fields = [
-            "name", "total_heads", "head_radius", "shoulder_width",
-            "hip_width", "subdivisions", "neck", "ribcage", "abdomen",
-            "pelvis", "glutes", "upper_arm", "forearm", "hand",
-            "thigh", "calf", "foot", "landmarks"
+            "name",
+            "total_heads",
+            "head_radius",
+            "shoulder_width",
+            "hip_width",
+            "subdivisions",
+            "neck",
+            "ribcage",
+            "abdomen",
+            "pelvis",
+            "glutes",
+            "upper_arm",
+            "forearm",
+            "hand",
+            "thigh",
+            "calf",
+            "foot",
+            "landmarks",
         ]
 
         for preset_name, preset in PRESETS.items():
@@ -204,16 +217,16 @@ class TestBlenderAddonOperators:
         from figure_generator.blender_addon import MESH_OT_figure_generator
 
         assert MESH_OT_figure_generator is not None
-        assert hasattr(MESH_OT_figure_generator, 'bl_idname')
-        assert hasattr(MESH_OT_figure_generator, 'bl_label')
+        assert hasattr(MESH_OT_figure_generator, "bl_idname")
+        assert hasattr(MESH_OT_figure_generator, "bl_label")
 
     def test_preset_operators_exist(self, mock_bpy):
         """Test that preset operator classes exist."""
         from figure_generator.blender_addon import (
-            MESH_OT_figure_female,
-            MESH_OT_figure_male,
             MESH_OT_figure_child,
+            MESH_OT_figure_female,
             MESH_OT_figure_heroic,
+            MESH_OT_figure_male,
         )
 
         assert MESH_OT_figure_female is not None
@@ -224,11 +237,11 @@ class TestBlenderAddonOperators:
     def test_operator_bl_idnames(self, mock_bpy):
         """Test that operators have correct bl_idnames."""
         from figure_generator.blender_addon import (
-            MESH_OT_figure_generator,
-            MESH_OT_figure_female,
-            MESH_OT_figure_male,
             MESH_OT_figure_child,
+            MESH_OT_figure_female,
+            MESH_OT_figure_generator,
             MESH_OT_figure_heroic,
+            MESH_OT_figure_male,
         )
 
         assert MESH_OT_figure_generator.bl_idname == "mesh.figure_generator"
@@ -246,8 +259,8 @@ class TestBlenderAddonMenu:
         from figure_generator.blender_addon import MESH_MT_figure_submenu
 
         assert MESH_MT_figure_submenu is not None
-        assert hasattr(MESH_MT_figure_submenu, 'bl_idname')
-        assert hasattr(MESH_MT_figure_submenu, 'bl_label')
+        assert hasattr(MESH_MT_figure_submenu, "bl_idname")
+        assert hasattr(MESH_MT_figure_submenu, "bl_label")
 
     def test_menu_bl_idname(self, mock_bpy):
         """Test that menu has correct bl_idname."""
@@ -293,8 +306,7 @@ class TestBlenderAddonBlInfo:
         """Test that bl_info has required fields."""
         from figure_generator.blender_addon import bl_info
 
-        required = ["name", "author", "version", "blender", "location",
-                   "description", "category"]
+        required = ["name", "author", "version", "blender", "location", "description", "category"]
 
         for field in required:
             assert field in bl_info, f"bl_info missing {field}"
@@ -347,10 +359,18 @@ class TestLandmarkConsistency:
 
         for preset_name, preset in PRESETS.items():
             landmarks = preset["landmarks"]
-            assert landmarks["shoulder_y"] > landmarks["bust_y"], f"{preset_name}: shoulder should be above bust"
-            assert landmarks["bust_y"] > landmarks["waist_y"], f"{preset_name}: bust should be above waist"
-            assert landmarks["waist_y"] > landmarks["pelvis_y"], f"{preset_name}: waist should be above pelvis"
-            assert landmarks["pelvis_y"] > landmarks["crotch_y"], f"{preset_name}: pelvis should be above crotch"
+            assert (
+                landmarks["shoulder_y"] > landmarks["bust_y"]
+            ), f"{preset_name}: shoulder should be above bust"
+            assert (
+                landmarks["bust_y"] > landmarks["waist_y"]
+            ), f"{preset_name}: bust should be above waist"
+            assert (
+                landmarks["waist_y"] > landmarks["pelvis_y"]
+            ), f"{preset_name}: waist should be above pelvis"
+            assert (
+                landmarks["pelvis_y"] > landmarks["crotch_y"]
+            ), f"{preset_name}: pelvis should be above crotch"
 
     def test_total_heads_matches_height(self, mock_bpy):
         """Test that total_heads roughly matches figure height."""

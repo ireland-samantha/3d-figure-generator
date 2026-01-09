@@ -6,9 +6,9 @@ from pathlib import Path
 import pytest
 
 from figure_generator.exporters import (
-    get_supported_formats,
     export_figure,
     get_format_info,
+    get_supported_formats,
 )
 from figure_generator.generator import FigureGenerator
 
@@ -48,7 +48,7 @@ class TestExportFigure:
 
     def test_export_glb(self, figure):
         """Test exporting figure to GLB format."""
-        with tempfile.NamedTemporaryFile(suffix='.glb', delete=False) as f:
+        with tempfile.NamedTemporaryFile(suffix=".glb", delete=False) as f:
             temp_path = Path(f.name)
 
         try:
@@ -61,7 +61,7 @@ class TestExportFigure:
 
     def test_export_obj(self, figure):
         """Test exporting figure to OBJ format."""
-        with tempfile.NamedTemporaryFile(suffix='.obj', delete=False) as f:
+        with tempfile.NamedTemporaryFile(suffix=".obj", delete=False) as f:
             temp_path = Path(f.name)
 
         try:
@@ -73,7 +73,7 @@ class TestExportFigure:
 
     def test_export_stl(self, figure):
         """Test exporting figure to STL format."""
-        with tempfile.NamedTemporaryFile(suffix='.stl', delete=False) as f:
+        with tempfile.NamedTemporaryFile(suffix=".stl", delete=False) as f:
             temp_path = Path(f.name)
 
         try:
@@ -85,7 +85,7 @@ class TestExportFigure:
 
     def test_export_with_explicit_format(self, figure):
         """Test exporting with explicit format override."""
-        with tempfile.NamedTemporaryFile(suffix='.bin', delete=False) as f:
+        with tempfile.NamedTemporaryFile(suffix=".bin", delete=False) as f:
             temp_path = Path(f.name)
 
         try:
@@ -98,7 +98,7 @@ class TestExportFigure:
 
     def test_export_with_specific_backend(self, figure):
         """Test exporting with specific backend."""
-        with tempfile.NamedTemporaryFile(suffix='.glb', delete=False) as f:
+        with tempfile.NamedTemporaryFile(suffix=".glb", delete=False) as f:
             temp_path = Path(f.name)
 
         try:
@@ -110,7 +110,7 @@ class TestExportFigure:
 
     def test_export_unsupported_format(self, figure):
         """Test that unsupported format raises ValueError."""
-        with tempfile.NamedTemporaryFile(suffix='.xyz', delete=False) as f:
+        with tempfile.NamedTemporaryFile(suffix=".xyz", delete=False) as f:
             temp_path = Path(f.name)
 
         try:
@@ -121,7 +121,7 @@ class TestExportFigure:
 
     def test_export_unsupported_format_explicit(self, figure):
         """Test that explicitly unsupported format raises ValueError."""
-        with tempfile.NamedTemporaryFile(suffix='.glb', delete=False) as f:
+        with tempfile.NamedTemporaryFile(suffix=".glb", delete=False) as f:
             temp_path = Path(f.name)
 
         try:
