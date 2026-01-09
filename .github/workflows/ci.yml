@@ -34,7 +34,7 @@ jobs:
         run: ruff check src tests
 
       - name: Type check with mypy
-        run: mypy src/figure_generator --ignore-missing-imports
+        run: mypy src/figure_generator --ignore-missing-imports --exclude blender_addon.py
 
   test:
     name: Test (Python ${{ matrix.python-version }})

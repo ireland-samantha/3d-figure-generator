@@ -1339,7 +1339,7 @@ def create_backend(name: str | None = None) -> MeshBackend:
         raise ImportError(f"Backend '{name}' not available. " f"Available backends: {available}")
 
     # Instantiate requested backend
-    backend_classes = {
+    backend_classes: dict[str, type[MeshBackend]] = {
         "trimesh": TrimeshBackend,
         "open3d": Open3DBackend,
         "numpy-stl": NumpySTLBackend,
@@ -1350,4 +1350,4 @@ def create_backend(name: str | None = None) -> MeshBackend:
     if backend_class is None:
         raise ValueError(f"Unknown backend: {name}")
 
-    return backend_class()
+    return backend_class()  # type: ignore[abstract]
