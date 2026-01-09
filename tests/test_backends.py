@@ -10,12 +10,23 @@ import pytest
 from figure_generator.backends import (
     MeshBackend,
     MeshData,
-    NumpySTLBackend,
     TrimeshBackend,
     create_backend,
     get_available_backends,
     is_running_in_blender,
 )
+
+# Check if numpy-stl is available for conditional tests
+try:
+    from stl import mesh as _stl_mesh  # noqa: F401
+
+    HAS_NUMPY_STL = True
+except ImportError:
+    HAS_NUMPY_STL = False
+
+# Only import NumpySTLBackend if numpy-stl is available
+if HAS_NUMPY_STL:
+    from figure_generator.backends import NumpySTLBackend
 
 
 class TestMeshData:
@@ -243,6 +254,7 @@ class TestIsRunningInBlender:
         mock_check.assert_called_with("bpy")
 
 
+@pytest.mark.skipif(not HAS_NUMPY_STL, reason="numpy-stl not installed")
 class TestNumpySTLBackend:
     """Tests for NumpySTLBackend class."""
 
@@ -363,6 +375,7 @@ class TestNumpySTLBackend:
             temp_path.unlink()
 
 
+@pytest.mark.skipif(not HAS_NUMPY_STL, reason="numpy-stl not installed")
 class TestCreateBackendWithNumpySTL:
     """Tests for create_backend with numpy-stl."""
 
