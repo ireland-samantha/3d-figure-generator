@@ -169,7 +169,6 @@ figure_generator/
 ├── backends.py    # Mesh creation backends (trimesh, numpy-stl, blender)
 ├── exporters.py   # Export utilities and format handling
 ├── cli.py         # Command-line interface
-└── blender_addon.py  # Blender integration (standalone capable)
 ```
 
 ### Key Design Decisions

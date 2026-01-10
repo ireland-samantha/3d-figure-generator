@@ -116,8 +116,6 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["B011"]
-# Blender addons require bl_info at top before imports
-"src/figure_generator/blender_addon.py" = ["E402"]
 
 [tool.mypy]
 python_version = "3.9"

@@ -53,7 +53,6 @@ figure_generator/
 ├── backends.py          # Mesh creation backends
 ├── exporters.py         # Export utilities
 ├── cli.py               # Command-line interface
-└── blender_addon.py     # Blender integration
 ```
 
 ## Data Flow
