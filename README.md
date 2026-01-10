@@ -215,7 +215,6 @@ figure-generator/
 │   ├── generator.py      # Figure generation logic
 │   ├── exporters.py      # Export utilities
 │   ├── cli.py            # Command-line interface
-│   └── blender_addon.py # Blender add-on (standalone)
 ├── tests/                # Test suite
 ├── configs/              # Example configurations
 ├── pyproject.toml        # Package configuration
