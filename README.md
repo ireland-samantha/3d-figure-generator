@@ -23,12 +23,6 @@ Generate configurable 3D figure primitive meshes for digital sculpting workflows
 
 ## Installation
 
-### From PyPI (Recommended)
-
-```bash
-pip install figure-generator[trimesh]
-```
-
 ### From Source
 
 ```bash
