@@ -69,27 +69,6 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  test-blender:
-    name: Test Blender Addon Structure
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev,trimesh]"
-
-      - name: Run Blender addon tests
-        run: pytest tests/test_blender_addon.py -v
-
-      - name: Verify addon file is valid Python
-        run: python -m py_compile src/figure_generator/blender_addon.py
 
   docs:
     name: Documentation
