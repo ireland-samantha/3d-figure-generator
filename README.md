@@ -6,9 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/ireland-samantha/3d-figure-generator#docker)
 
-Generate configurable 3D figure primitive meshes for digital sculpting workflows.
-
-**Figure Generator** creates anatomically-proportioned base meshes using simple primitives (spheres, cylinders, boxes) that serve as starting points for sculpting in apps like Nomad Sculpt, Blender, ZBrush, and others.
+CLI tool and Blender addon for creating anatomically-proportioned base meshes using simple primitives (spheres, cylinders, boxes) that serve as starting points for sculpting in apps like Nomad Sculpt, Blender, ZBrush, and others.
 
 ## Features
 
@@ -35,17 +33,6 @@ pip install -e ".[trimesh]"
 
 ```bash
 pip install -e ".[trimesh,dev]"
-```
-
-### Docker
-
-```bash
-# Build
-docker build -t figure-generator .
-
-# Run
-docker run figure-generator --list-presets
-docker run -v $(pwd):/output figure-generator --preset female_adult -o /output/figure.glb
 ```
 
 ## Quick Start
@@ -104,7 +91,7 @@ The Blender add-on provides native integration with Blender's UI.
 1. Open Blender
 2. Go to **Edit > Preferences > Add-ons**
 3. Click **Install...**
-4. Select `figure_generator_addon.py` from the repository
+4. Select `src/figure_generator/blender_addon.py` from the repository
 5. Enable the "Figure Generator" add-on (check the checkbox)
 
 ### Usage
