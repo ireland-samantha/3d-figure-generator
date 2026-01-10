@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://github.com/ireland-samantha/3d-figure-generator#docker)
 
-CLI tool and Blender addon for creating anatomically-proportioned base meshes using simple primitives (spheres, cylinders, boxes) that serve as starting points for sculpting in apps like Nomad Sculpt, Blender, ZBrush, and others.
+CLI tool for creating anatomically-proportioned base meshes using simple primitives (spheres, cylinders, boxes) that serve as starting points for sculpting in apps like Nomad Sculpt, Blender, ZBrush, and others.
 
 ## Features
 
@@ -16,7 +16,6 @@ CLI tool and Blender addon for creating anatomically-proportioned base meshes us
 - **Fully Customizable**: JSON configuration for every body part dimension
 - **Multiple Backends**: trimesh, Open3D, numpy-stl, or Blender
 - **Multiple Formats**: GLB, GLTF, OBJ, STL, PLY, FBX, DAE, USD, and more
-- **Blender Add-on**: Native integration with Blender's Add > Mesh menu
 - **Clean Python API**: Use as a library or CLI tool
 
 ## Installation
@@ -82,62 +81,6 @@ for mesh in figure.meshes:
     print(f"{mesh.name}: {len(mesh.vertices)} vertices")
 ```
 
-## Blender Add-on
-
-The Blender add-on provides native integration with Blender's UI.
-
-### Installation
-
-1. Open Blender
-2. Go to **Edit > Preferences > Add-ons**
-3. Click **Install...**
-4. Select `src/figure_generator/blender_addon.py` from the repository
-5. Enable the "Figure Generator" add-on (check the checkbox)
-
-### Usage
-
-After installation, go to **Add > Mesh > Figure**:
-
-| Menu Item | Description |
-|-----------|-------------|
-| **Figure (Custom)...** | Opens dialog with all options |
-| **Female Adult** | Quick preset - 7.5 heads, A-pose |
-| **Male Adult** | Quick preset - 8 heads, A-pose |
-| **Child** | Quick preset - 6 heads, A-pose |
-| **Heroic** | Quick preset - 8.5 heads, A-pose |
-
-### Custom Dialog Options
-
-When you select **Figure (Custom)...**, a dialog appears with:
-
-| Option | Description |
-|--------|-------------|
-| **Preset** | Female Adult, Male Adult, Child, Heroic |
-| **Pose** | A-Pose (45°), T-Pose (90°), Relaxed (15°), Custom |
-| **Arm Angle** | Custom angle slider (shown when Pose is "Custom") |
-| **Scale** | Overall figure scale multiplier |
-| **Join Meshes** | Combine all parts into a single mesh object |
-
-The figure is placed at the 3D cursor location and all parts are added to a "Figure" collection.
-
-## Presets
-
-| Preset | Description | Head Units |
-|--------|-------------|------------|
-| `female_adult` | Adult female proportions | 7.5 |
-| `male_adult` | Adult male proportions | 8.0 |
-| `child` | Child (6-8 years) proportions | 6.0 |
-| `heroic` | Idealized/stylized proportions | 8.5 |
-
-## Poses
-
-| Pose | Arm Angle | Best For |
-|------|-----------|----------|
-| `apose` | 45° | Sculpting (default) |
-| `tpose` | 90° | Rigging |
-| `relaxed` | 15° | Natural standing |
-
-Arm angle is measured from vertical: 0° = arms straight down, 90° = arms horizontal (T-pose).
 
 ## Configuration
 
